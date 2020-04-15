@@ -1,6 +1,7 @@
+#!/usr/bin/python3
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during Spring 2020 for learning Python & SWEng
-# presently works bests in Raspbian Mu Python environment
+# presently works well in Raspbian Mu Python environment
 # use simplified Newtonian physics and numerical integrations
 # F = ma = GMm/r^2
 # a = F/m = GM/r^2
@@ -67,7 +68,7 @@ setuplib = (['moonang','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','ch
             [0.0, 0.8491, 0.0, 0.0, 861.27243, 10, 1.2, 1.0, 70, 1000, 'just below L1 orbit'],
             [0.0, 0.85, 0.0, 0.0, 870.0, 10, 1.2, 1.0, 70, 1000, 'near L1'],
             [0.0, 0.90, 0.0, 0.0, 770.0, 10, 1.2, 1.0, 70, 1000, 'distant lunar orbit'],
-            [135.4, 0.0168, 0.0, 0.0, 11050.0, 1, 0.7, 1.0, 70, 1000, 'escape with lunar assist'],
+            [135.4, 0.0168, 0.0, 0.0, 11050.0, 1, 2.7, 1.0, 70, 1000, 'escape with lunar assist'],
             [135.0, 0.0168, 0.0, 0.0, 11050.0, 3, 0.7, 1.0, 70, 1000, 'Ranger direct lunar impact'],
             [0.0, 0.995, 0.0, 0.0, 2590.0, 10, 1.1, 1.0, 70, 1000, 'Apollo 8 orbiting moon'],
             [135.0, 0.017, 0.0, 0.0, 10998.0, 1, 0.7, 1.0, 40, 1000, 'Apollo 13 safe return'],
@@ -80,7 +81,8 @@ setuplib = (['moonang','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','ch
             [60.0, 1.0, 0.0, 0.0, 900.0, 60, 1.5, 5.0, 80, 1000, 'many lunar interactions'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 30, 1.3, 1.0, 100, 1000, 'lunar impact, 839k steps'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 10, 2.0, 5.0, 500, 4000, 'temporary lunar orbits then impact'],
-            [60.0, 0.9, 0.0, 0.0, 0.0, 10, 1.3, 1.0, 100, 1000, 'Fall to Earth.'],
+            [55.0, 3.0, 0.0, 0.0, 0.0, 10, 2.0, 1.0, 100, 1000, 'non-fall to Earth from 3 moondistances.'],
+            [40.0, 5.0, 0.0, 0.0, 0.0, 1, 3.0, 1.0, 500, 10000, 'fall to Earth from 5 moondistances.'],
             [60.0, 0.9, 0.0, 0.0, 950.0, 60, 1.7, 5.0, 30, 1000, '1.1M steps to Lunar Impact'],
             [60.0, 0.8, 0.0, 0.0, 1073., 10, 1.3, 1.0, 100, 1000, 'lunar impact'],
             [60.0, 1.0, 0.0, 0.0, 923.0, 10, 1.1, 1.0, 70, 1000, 'lunar impact, vy=921-926'])
@@ -278,6 +280,10 @@ print(str(setupnum), " ", inz.description,
       "  last.ips=", str(ips), "  avg.ips=", str(itrate),
       "  plot.rate=", str(plotrate),
       "  d2e-oldd2e=", str(int(d2e-oldd2e)))
+
 win.getMouse()    # wait for final mouse click
 win.close()
+
+import code		# drop into a Python shell
+code.interact( local=dict( globals(), **locals() ) )
 # end
