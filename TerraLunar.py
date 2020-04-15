@@ -102,7 +102,7 @@ def grabsetup(i):   # return indexed setup from sample library
 #     print(str(i), setuplib[int(i)][10])
 
 i = 1
-columns = 4
+columns = 3
 while i < len(setuplib):
     for j in range(i, min(i+columns, len(setuplib))):
         print(f'{j:2d} {setuplib[j][10]:40}', end='')
