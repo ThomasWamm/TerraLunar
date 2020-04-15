@@ -22,9 +22,10 @@ displayoptions = [[0, "small netbook screen", 1024, 580],
                   [3, "huge 4k big screen", 3840, 2100],
                   [4, "for Raspbian at 1080p", 1917, 1030],
                   [5, "Win10 1920x1080 with 125% scaleup", 1540, 840]]
+
 winwidth = int(displayoptions[displaychoice][2])
 winheight = int(displayoptions[displaychoice][3])
-print(displayoptions[displaychoice][1])
+print('Display = ' + displayoptions[displaychoice][1])
 
 # define a class to store each set of initial conditions
 class Iset:
@@ -54,9 +55,9 @@ class Iset:
 
 setuplib = (['moonang','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','chktrig','Description'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 60, 1000, 'eventual escape'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 2.0, 5.0, 600, 4000, 'eventual lunar impact after 1M steps; low dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 2.0, 5.0, 600, 4000, 'lunar impact 1M steps; small dt'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 10, 2.0, 5.0, 60, 1000, 'eventual lunar impact; medium dt'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 2.0, 5.0, 60, 1000, 'eventual lunar impact; low precision dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 2.0, 5.0, 60, 1000, 'eventual lunar impact; big dt'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 60, 1000, 'eventual escape'],
             [0.0, 0.017, 0.0, 0.0, 9200.0, 1, 0.03, 1.0, 20, 1000, 'elliptical orbit'],
             [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 10, 1000, 'LEO = low Earth orbit'],
@@ -66,15 +67,15 @@ setuplib = (['moonang','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','ch
             [0.0, 0.8491, 0.0, 0.0, 861.27243, 10, 1.2, 1.0, 70, 1000, 'just below L1 orbit'],
             [0.0, 0.85, 0.0, 0.0, 870.0, 10, 1.2, 1.0, 70, 1000, 'near L1'],
             [0.0, 0.90, 0.0, 0.0, 770.0, 10, 1.2, 1.0, 70, 1000, 'distant lunar orbit'],
-            [135.4, 0.0168, 0.0, 0.0, 11050.0, 1, 0.7, 1.0, 70, 1000, 'escape velocity using lunar assist'],
+            [135.4, 0.0168, 0.0, 0.0, 11050.0, 1, 0.7, 1.0, 70, 1000, 'escape with lunar assist'],
             [135.0, 0.0168, 0.0, 0.0, 11050.0, 3, 0.7, 1.0, 70, 1000, 'Ranger direct lunar impact'],
             [0.0, 0.995, 0.0, 0.0, 2590.0, 10, 1.1, 1.0, 70, 1000, 'Apollo 8 orbiting moon'],
             [135.0, 0.017, 0.0, 0.0, 10998.0, 1, 0.7, 1.0, 40, 1000, 'Apollo 13 safe return'],
             [135.0, 0.017, 0.0, 0.0, 10990.0, 1, 0.7, 1.0, 40, 1000, 'direct lunar impact'],
             [135.0, 0.017, 0.0, 0.0, 11000.0, 1, 1.2, 1.0, 40, 1000, 'lost Apollo 13'],
             [130.0, 0.02, 0.0, 0.0, 10080.0, 10, 1.1, 1.0, 70, 1000, '2-orbit lunar impact'],
-            [60.0, 0.8, 0.0, 400.0, 1100., 50, 3.0, 5.0, 60, 1000, 'attempt trailing Langrange until impact'],
-            [60.0, 0.8, 0.0, 100.0, 1073., 10, 1.3, 5.0, 100, 1000, 'gravity assist escape'],
+            [60.0, 0.8, 0.0, 400.0, 1100., 50, 3.0, 5.0, 60, 1000, 'failed L4; eventual lunar impact'],
+            [60.0, 0.8, 0.0, 100.0, 1073., 10, 10.0, 10.0, 1000, 10000, 'gravity assist escape'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 101, 1.3, 1.0, 100, 1000, 'lunar impact 1.5M loops'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 60, 1.5, 5.0, 80, 1000, 'many lunar interactions'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 30, 1.3, 1.0, 100, 1000, 'lunar impact, 839k steps'],
@@ -97,13 +98,21 @@ def grabsetup(i):   # return indexed setup from sample library
                 checktrigger=setuplib[i][9],
                 description=setuplib[i][10])
 
-for i in range(1, len(setuplib)):
-    print(str(i), setuplib[int(i)][10])
+# for i in range(1, len(setuplib)):
+#     print(str(i), setuplib[int(i)][10])
+
+i = 1
+columns = 4
+while i < len(setuplib):
+    for j in range(i, min(i+columns, len(setuplib))):
+        print(f'{j:2d} {setuplib[j][10]:40}', end='')
+    print()
+    i += columns
 
 query = None
 while query is None:
     query = input("Choose an initial setup: ")
-    if query == '':     # make <Enter> convenient
+    if query == '':     # <Enter> is convenient
         query = 1
     else:
         try:
@@ -116,7 +125,6 @@ if query < 1:
     query = 1
 if query > len(setuplib)-1:
     query = len(setuplib)-1
-print(query)
 setupnum = query
 
 inz = grabsetup(setupnum)
@@ -134,7 +142,7 @@ for i in range(50):
 # use average Earth-Moon distance for view scaling
 moondistance = 3.84399e8
 
-# set up initial conditions in our simulated sub-universe
+# set up initial conditions in our simulated universe
 # Earth at center origin
 earthrad = 6.3781e6
 earthx = 0.0
@@ -152,11 +160,9 @@ earth.setWidth(2)
 earth.setFill('blue')
 earth.setOutline('blue')
 earth.draw(win)
-# win.plot(earthx, earthy, color='blue')
 
 moonrad = 1.7374e6
-moonstartangle = inz.moonstartangle     # in degrees, for human convenience
-moonangle = math.radians(moonstartangle)
+moonangle = math.radians(inz.moonstartangle)    # was in degrees for convenience
 moonx = earthx + moondistance*math.cos(math.radians(moonangle))
 moony = earthy + moondistance*math.sin(math.radians(moonangle))
 oldmx = moonx
@@ -168,17 +174,17 @@ moon.setOutline('white')
 moon.draw(win)
 win.plot(moonx, moony, color='dark grey')
 
-messageul = gr.Text(gr.Point(xll*6/8, yur*7/8), inz.description)
-messageul.setTextColor('green')
-messageul.draw(win)
+textul = gr.Text(gr.Point(xll*6/8, yur*7/8), inz.description)
+textul.setTextColor('green')
+textul.draw(win)
 
-messageur = gr.Text(gr.Point(xur*6/8, yur*7/8), text='Click to exit')
-messageur.setTextColor('pink')
-messageur.draw(win)
+textur = gr.Text(gr.Point(xur*6/8, yur*7/8), text='Click to exit')
+textur.setTextColor('pink')
+textur.draw(win)
 
-messagelr = gr.Text(gr.Point(xur*6/8, yll*7/8), text='Iterations/second')
-messagelr.setTextColor('yellow')
-messagelr.draw(win)
+textlr = gr.Text(gr.Point(xur*6/8, yll*7/8), text='Iterations/second')
+textlr.setTextColor('yellow')
+textlr.draw(win)
 
 shipx = earthx + moondistance*inz.shipxmd
 shipy = earthy + moondistance*inz.shipymd
@@ -191,7 +197,7 @@ colorsteps = 0
 win.plot(shipx, shipy, color=shipcolors[shipcolor])
 trendcolor = 'blue'
 
-simtime = 0     # elapsed simulation time
+simtime = 0             # elapsed simulation time
 dtime = inz.dtime       # time step for simulation
 gravcon = -6.67430e-11
 earthgrav = gravcon * 5.972e24
@@ -200,14 +206,13 @@ moongrav = gravcon * 7.342e22
 moonstep = math.radians(dtime*360./(27.*24*60*60 + 7.*3600 + 43.*60 + 12.))
 
 iters = 0
-lastiters = iters
+olditers = iters
 starttime = time.time()
-lasttime = starttime
+oldtime = starttime
 plots = 0
 ips = 0
 
 while win.checkMouse() is None:
-    # time.sleep(0.001)
     oldd2e = d2e
     d2e = math.hypot(shipx - earthx, shipy - earthy)
     if d2e < earthrad:
@@ -215,18 +220,16 @@ while win.checkMouse() is None:
         earth.move(0, 0)
         print(">>>>>>> Crashed on Earth ! <<<<<<<")
         break
-    s2eaccel = dtime * earthgrav / (d2e * d2e * d2e)
-    shipvx += s2eaccel * (shipx - earthx)
-    shipvy += s2eaccel * (shipy - earthy)
     d2m = math.hypot(shipx - moonx, shipy - moony)
     if d2m < moonrad:
         moon.setFill('red')
         moon.move(0, 0)
         print("* * * * * * *  Lunar impact !  * * * * * * *")
         break
+    s2eaccel = dtime * earthgrav / (d2e * d2e * d2e)
     s2maccel = dtime * moongrav / (d2m * d2m * d2m)
-    shipvx += s2maccel * (shipx - moonx)
-    shipvy += s2maccel * (shipy - moony)
+    shipvx += s2eaccel * (shipx - earthx) + s2maccel * (shipx - moonx)
+    shipvy += s2eaccel * (shipy - earthy) + s2maccel * (shipy - moony)
     oldshipy = shipy
     shipx += dtime * shipvx
     shipy += dtime * shipvy
@@ -244,25 +247,21 @@ while win.checkMouse() is None:
         oldmy = moony
         plots += 1
     if iters % inz.checktrigger == 0:
-        # win.plot(moonx, moony, color='dark grey')
-        trendcolor = 'blue'     # if distance to Earth stays same
+        trendcolor = 'green'
         if d2e > oldd2e:
-            trendcolor = 'red'     # if distance to Earth increases
-        elif d2e < oldd2e:
-            trendcolor = 'green'     # if distance to Earth decreases
+            trendcolor = 'red'     # increasing distance to Earth
         earth.setOutline(trendcolor)
-        earth.move(0, 0)
-        newiters = iters
-        newtime = time.time()   # calculate recent iterations per second
-        delta = newtime - lasttime
+        # earth.move(0, 0)
+        newtime = time.time()   # calculate current iterations per second
+        delta = newtime - oldtime
         if delta != 0:
-            ips = int((newiters - lastiters)/delta)
-#        print(0, ips)
-        lasttime = newtime
-        lastiters = newiters
-        messagelr.undraw()
-        messagelr.setText('ips = ' + str(ips))
-        messagelr.draw(win)
+            ips = int((iters - olditers)/delta)
+        # print(0, ips)
+        oldtime = newtime
+        olditers = iters
+        # textlr.undraw()
+        textlr.setText('ips = ' + str(ips))
+        # textlr.draw(win)
     simtime += dtime
     iters += 1
 
@@ -278,7 +277,7 @@ print(str(setupnum), " ", inz.description,
       "  iters=", str(iters),
       "  last.ips=", str(ips), "  avg.ips=", str(itrate),
       "  plot.rate=", str(plotrate),
-      "  d2e-oldd2e=", str(d2e-oldd2e))
-win.getMouse()    # wait for another mouse click
-win.close()    # Close window when done
+      "  d2e-oldd2e=", str(int(d2e-oldd2e)))
+win.getMouse()    # wait for final mouse click
+win.close()
 # end
