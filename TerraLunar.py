@@ -164,7 +164,7 @@ earth.setOutline('blue')
 earth.draw(win)
 
 moonrad = 1.7374e6
-moonangle = math.radians(inz.moonstartangle)    # was in degrees for convenience
+moonangle = math.radians(inz.moonstartangle)    # was degrees for convenience
 moonx = earthx + moondistance*math.cos(math.radians(moonangle))
 moony = earthy + moondistance*math.sin(math.radians(moonangle))
 oldmx = moonx
@@ -284,6 +284,6 @@ print(str(setupnum), " ", inz.description,
 win.getMouse()    # wait for final mouse click
 win.close()
 
-import code		# drop into a Python shell
+import code          # drop into a Python shell
 code.interact( local=dict( globals(), **locals() ) )
 # end
