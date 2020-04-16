@@ -16,7 +16,7 @@ import time
 
 # global objects for graphics, Earth, Moon, and one spacecraft
 
-displaychoice = 4
+displaychoice = 5
 displayoptions = [[0, "small netbook screen", 1024, 580],
                   [1, "medium 720p screen", 1280, 700],
                   [2, "large 1080p screen", 1920, 1080],
@@ -274,6 +274,7 @@ if elapsedtime == 0:
 itrate = int(iters / elapsedtime)
 plotrate = int(plots / elapsedtime)
 
+print()
 print(str(setupnum), " ", inz.description,
       "  elapsed=", str(int(elapsedtime)),
       "  iters=", str(iters),
@@ -284,6 +285,8 @@ print(str(setupnum), " ", inz.description,
 win.getMouse()    # wait for final mouse click
 win.close()
 
-import code          # drop into a Python shell
+print()
+
+import code		# drop into a Python shell
 code.interact( local=dict( globals(), **locals() ) )
 # end
