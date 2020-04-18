@@ -13,20 +13,44 @@ import graphics as gr
 from random import randint
 import math
 import time
+import code
+import json
 
 # global objects for graphics, Earth, Moon, and one spacecraft
 
-displaychoice = 5
+cfg = {'for TerraLunar local configuration: ': 'edit this file then resave as tl.cfg',
+       'windowwidth': 1920,
+       'windowheight': 1030,
+       'localconfig': 'Raspbian with 1920x1080 display'}
+
+with open('tl-sample.cfg', 'w') as f:
+    json.dump(cfg, f)
+
+try:
+    with open('tl.cfg', 'r') as f:
+        cfg = json.load(f)
+except:
+    print('Local config file tl.cfg not found, so will use defaults.')
+
+winwidth = cfg['windowwidth']
+winheight = cfg['windowheight']
+localconfig = cfg['localconfig']
+
+print('Configured for ' + localconfig)
+
+displaychoice = 4
 displayoptions = [[0, "small netbook screen", 1024, 580],
                   [1, "medium 720p screen", 1280, 700],
                   [2, "large 1080p screen", 1920, 1080],
                   [3, "huge 4k big screen", 3840, 2100],
                   [4, "for Raspbian at 1080p", 1917, 1030],
-                  [5, "Win10 1920x1080 with 125% scaleup", 1540, 840]]
+                  [5, "Win10 1920x1080 with 125% scaleup", 1540, 840],
+                  [6, "old iMac display 1920x1200", 1940, 1160],
+                  [7, "lowres Windows 10 laptop 1366x768", 1380, 740]]
 
-winwidth = int(displayoptions[displaychoice][2])
-winheight = int(displayoptions[displaychoice][3])
-print('Display = ' + displayoptions[displaychoice][1])
+# winwidth = int(displayoptions[displaychoice][2])
+# winheight = int(displayoptions[displaychoice][3])
+# print('Display choice = #' + str(displaychoice) + '  ' + displayoptions[displaychoice][1])
 
 # define a class to store each set of initial conditions
 class Iset:
@@ -287,6 +311,6 @@ win.close()
 
 print()
 
-import code		# drop into a Python shell
+# drop into a Python shell
 code.interact( local=dict( globals(), **locals() ) )
 # end
