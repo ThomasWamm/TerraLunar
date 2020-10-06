@@ -54,7 +54,7 @@ displayoptions = [[0, "small netbook screen", 1024, 580],
 
 # define a class to store each set of initial conditions
 class Iset:
-    def __init__(self, moonstartangle=60.0,
+    def __init__(self, moondegrees=60.0,
                  shipxmd=1.0,
                  shipymd=0.0,
                  shipvx=0.0,
@@ -66,7 +66,7 @@ class Iset:
                  checktrigger=1000,
                  description='Default setup'):
 
-        self.moonstartangle = moonstartangle
+        self.moondegrees = moondegrees
         self.shipxmd = shipxmd
         self.shipymd = shipymd
         self.shipvx = shipvx
@@ -78,7 +78,7 @@ class Iset:
         self.checktrigger = checktrigger
         self.description = description
 
-setuplib = (['moonang','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','chktrig','Description'],
+setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','chktrig','Description'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 60, 1000, 'eventual escape'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 2.0, 5.0, 600, 4000, 'lunar impact 1M steps; small dt'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 10, 2.0, 5.0, 60, 1000, 'eventual lunar impact; medium dt'],
@@ -99,20 +99,20 @@ setuplib = (['moonang','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','ch
             [135.0, 0.017, 0.0, 0.0, 10990.0, 1, 0.7, 1.0, 40, 1000, 'direct lunar impact'],
             [135.0, 0.017, 0.0, 0.0, 11000.0, 1, 1.2, 1.0, 40, 1000, 'lost Apollo 13'],
             [130.0, 0.02, 0.0, 0.0, 10080.0, 10, 1.1, 1.0, 70, 1000, '2-orbit lunar impact'],
-            [60.0, 0.8, 0.0, 400.0, 1100., 50, 3.0, 5.0, 60, 1000, 'failed L4; eventual lunar impact'],
-            [60.0, 0.8, 0.0, 100.0, 1073., 10, 10.0, 10.0, 1000, 10000, 'gravity assist escape'],
+            [60.0, 0.8, 0.0, 400.0, 1100., 50, 1.8, 5.0, 60, 1000, 'failed L4'],
+            [60.0, 0.8, 0.0, 100.0, 1073., 10, 10.0, 10.0, 1000, 10000, 'eventual lunar impact #2'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 101, 1.3, 1.0, 100, 1000, 'lunar impact 1.5M loops'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 60, 1.5, 5.0, 80, 1000, 'many lunar interactions'],
-            [60.0, 1.0, 0.0, 0.0, 900.0, 30, 1.3, 1.0, 100, 1000, 'lunar impact, 839k steps'],
+            [60.0, 1.0, 0.0, 0.0, 900.0, 30, 1.3, 1.0, 100, 1000, 'lunar impact, 2.2M steps'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 10, 2.0, 5.0, 500, 4000, 'temporary lunar orbits then impact'],
             [55.0, 3.0, 0.0, 0.0, 0.0, 10, 2.0, 1.0, 100, 1000, 'non-fall to Earth from 3 moondistances.'],
             [40.0, 5.0, 0.0, 0.0, 0.0, 1, 3.0, 1.0, 500, 10000, 'fall to Earth from 5 moondistances.'],
-            [60.0, 0.9, 0.0, 0.0, 950.0, 60, 1.7, 5.0, 30, 1000, '1.1M steps to Lunar Impact'],
+            [60.0, 0.9, 0.0, 0.0, 950.0, 60, 1.7, 5.0, 30, 1000, '11.85M steps to Lunar Impact'],
             [60.0, 0.8, 0.0, 0.0, 1073., 10, 1.3, 1.0, 100, 1000, 'lunar impact'],
             [60.0, 1.0, 0.0, 0.0, 923.0, 10, 1.1, 1.0, 70, 1000, 'lunar impact, vy=921-926'])
 
 def grabsetup(i):   # return indexed setup from sample library
-    return Iset(moonstartangle=setuplib[i][0],
+    return Iset(moondegrees=setuplib[i][0],
                 shipxmd=setuplib[i][1],
                 shipymd=setuplib[i][2],
                 shipvx=setuplib[i][3],
@@ -188,9 +188,9 @@ earth.setOutline('blue')
 earth.draw(win)
 
 moonrad = 1.7374e6
-moonangle = math.radians(inz.moonstartangle)    # was degrees for convenience
-moonx = earthx + moondistance*math.cos(math.radians(moonangle))
-moony = earthy + moondistance*math.sin(math.radians(moonangle))
+moonangle = math.radians(inz.moondegrees)    # was degrees for convenience
+moonx = earthx + moondistance*math.cos(moonangle)
+moony = earthy + moondistance*math.sin(moonangle)
 oldmx = moonx
 oldmy = moony
 moon = gr.Circle(gr.Point(moonx, moony), inz.radscale*moonrad)
