@@ -2,7 +2,7 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Oct-13 -- Major edits to merge versions.
+#     2020-Oct-15 -- Major edits to merge versions, etc.
 #
 # Presently works well in RaspberryOS Mu Python environment.
 #
@@ -144,7 +144,7 @@ setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','ch
             [0.0, 0.995, 0.0, 0.0, 2590.0, 10, 1.1, 1.0, 70, 1000, 'Apollo 8 orbiting moon'],
             [135.0, 0.017, 0.0, 0.0, 10998.0, 1, 0.7, 1.0, 40, 1000, 'Apollo 13 safe return'],
             [135.0, 0.017, 0.0, 0.0, 10990.0, 1, 0.7, 1.0, 40, 1000, 'direct lunar impact'],
-            [135.0, 0.017, 0.0, 0.0, 11000.0, 1, 1.2, 1.0, 40, 1000, 'lost Apollo 13'],
+            [135.0, 0.017, 0.0, 0.0, 11000.0, 1, 0.8, 1.0, 40, 1000, 'lost Apollo 13'],
             [130.0, 0.02, 0.0, 0.0, 10080.0, 10, 1.1, 1.0, 70, 1000, '2-orbit lunar impact'],
             [60.0, 0.8, 0.0, 400.0, 1100., 50, 1.8, 5.0, 60, 1000, 'failed L4'],
             [60.0, 0.8, 0.0, 100.0, 1073., 10, 10.0, 10.0, 1000, 10000, 'eventual lunar impact #2'],
@@ -347,8 +347,6 @@ show_earth(er, eg, eb)
 
 moonrad = 1.7374e6   # radius of moon in meters
 
-##### deliberate bug for testing initial condition sensitivity ######
-### moonangle = math.radians(math.radians(inz.moondegrees))  # calculate with radians
 moonangle = math.radians(inz.moondegrees)  # calculate with radians
 moonx = earthx + moondistance*math.cos(moonangle)
 moony = earthy + moondistance*math.sin(moonangle)
@@ -391,6 +389,7 @@ shipy = earthy + moondistance*inz.shipymd
 oldx = shipx  # to keep track of previous displayed ship location
 oldy = shipy
 d2e = math.hypot(shipx - earthx, shipy - earthy)
+moonunits = d2e / moondistance
 shipvx = inz.shipvx
 shipvy = inz.shipvy
 
@@ -413,6 +412,15 @@ def setshipcolor(i):
 setshipcolor(shipcolor)
 canvas.fill_pixel(shipx, shipy)
 '''
+
+# Two different ship shape options, I prefer square...
+# ship = gr.Circle(gr.Point(shipx, shipy), apixel*1.5)
+ship = gr.Rectangle(gr.Point(shipx-apixel, shipy-apixel),
+                    gr.Point(shipx+apixel, shipy+apixel))
+ship.setWidth(1)
+ship.setFill('red')
+ship.setOutline('red')
+ship.draw(win)
 
 simtime = 0             # elapsed simulation time
 dtime = inz.dtime       # time step for simulation
@@ -493,6 +501,7 @@ while win.checkMouse() is None:     # break out on mouse click
         shipcolor = colorsteps % len(shipcolors)
         moon.move(moonx - oldmx, moony - oldmy)
         win.plot(shipx, shipy, color=shipcolors[shipcolor])
+        ship.move(shipx - oldx, shipy - oldy)
         # setshipcolor(shipcolor)  # for iOS version
         # canvas.fill_pixel(shipx, shipy)
         oldx = shipx
