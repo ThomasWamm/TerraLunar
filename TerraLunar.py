@@ -134,7 +134,7 @@ setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','ch
             [0.0, 0.017, 0.0, 0.0, 9200.0, 1, 0.03, 1.0, 20, 10000, 'elliptical orbit'],
             [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 10, 10000, 'LEO = low Earth orbit'],
             [0.0, 0.10968811, 0.0, 0.0, 3074.7937, 1, 0.15, 1.0, 50, 10000, 'geosynchronous orbit'],
-            [0.0, 0.8491, 0.0, 0.0, 861.2724303351446, 10, 1.2, 1.0, 70, 10000, 'just inside L1 lunar orbit'],
+            [0.0, 0.8491, 0.0, 0.0, 861.2724303351446, 10, 1.2, 1.0, 70, 10000, 'lunar orbit just inside L1'],
             [0.0, 0.8491, 0.0, 0.0, 861.2724303351447, 10, 1.2, 1.0, 70, 10000, 'just outside L1 lunar orbit'],
             [0.0, 0.8491, 0.0, 0.0, 861.27243, 10, 1.2, 1.0, 70, 10000, 'just below L1 orbit'],
             [0.0, 0.85, 0.0, 0.0, 870.0, 10, 1.2, 1.0, 70, 10000, 'near L1'],
@@ -309,6 +309,8 @@ viewscale = winmin / (3.0 * moondistance * inz.winscale)  # pixels/meter
 # apixel = 1.5 / viewscale   # to plot pixels as ship moves
 apixel = 2.5 / viewscale   # to plot pixels as ship moves
 offscreen = 0.4 * winmax / viewscale     # meters to be out of view
+crumbinterval = 5
+crumbsteps = crumbinterval
 
 ''' for iOS...
 canvas.translate(winwidth/2.0, winheight/2.0)   # earth at center of view
@@ -500,12 +502,15 @@ while win.checkMouse() is None:     # break out on mouse click
 
     if abs(shipx - oldx) + abs(shipy - oldy) + abs(moonx - oldmx) + abs(moony - oldmy) > apixel:
         # only update display when ship or moon moves at least a pixel
-        pathcolor = colorsteps % len(pathcolors)
         moon.move(moonx - oldmx, moony - oldmy)
-        win.plot(shipx, shipy, color=pathcolors[pathcolor])
         ship.move(shipx - oldx, shipy - oldy)
-        # setpathcolor(pathcolor)  # for iOS version
-        # canvas.fill_pixel(shipx, shipy)
+        crumbsteps -= 1   # occasionally drop a crumb on the path
+        if crumbsteps <= 0:
+            crumbsteps = crumbinterval
+            pathcolor = colorsteps % len(pathcolors)
+            win.plot(shipx, shipy, color=pathcolors[pathcolor])
+            # setpathcolor(pathcolor)  # for iOS version
+            # canvas.fill_pixel(shipx, shipy)
         oldx = shipx
         oldy = shipy
         # hide_old_moon()  # for iOS version
