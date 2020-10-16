@@ -2,7 +2,7 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Oct-15 -- Major edits to merge versions, etc.
+#     2020-Oct-16 -- Optimized speed.
 #
 # Presently works well in RaspberryOS Mu Python environment.
 #
@@ -125,38 +125,38 @@ class Initset:
 # A variety of interesting setups have been accumulated during development...
 
 setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','chktrig','Description'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 1.6, 5.0, 60, 1000, '6.1M steps to lunar impact'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 1.6, 5.0, 60, 1000, '323k steps to lunar impact'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 2.0, 5.0, 600, 4000, 'lunar impact 1M steps; small dt'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 10, 2.0, 5.0, 60, 1000, 'eventual lunar impact; medium dt'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 2.0, 5.0, 60, 1000, 'eventual lunar impact; big dt'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 60, 1000, 'eventual escape'],
-            [0.0, 0.017, 0.0, 0.0, 9200.0, 1, 0.03, 1.0, 20, 1000, 'elliptical orbit'],
-            [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 10, 1000, 'LEO = low Earth orbit'],
-            [0.0, 0.10968811, 0.0, 0.0, 3074.7937, 1, 0.15, 1.0, 50, 1000, 'geosynchronous orbit'],
-            [0.0, 0.8491, 0.0, 0.0, 861.2724303351446, 10, 1.2, 1.0, 70, 1000, 'just inside L1 lunar orbit'],
-            [0.0, 0.8491, 0.0, 0.0, 861.2724303351447, 10, 1.2, 1.0, 70, 1000, 'just outside L1 lunar orbit'],
-            [0.0, 0.8491, 0.0, 0.0, 861.27243, 10, 1.2, 1.0, 70, 1000, 'just below L1 orbit'],
-            [0.0, 0.85, 0.0, 0.0, 870.0, 10, 1.2, 1.0, 70, 1000, 'near L1'],
-            [0.0, 0.90, 0.0, 0.0, 770.0, 10, 1.2, 1.0, 70, 1000, 'distant lunar orbit'],
-            [135.4, 0.0168, 0.0, 0.0, 11050.0, 1, 2.7, 1.0, 70, 1000, 'escape with lunar assist'],
-            [135.0, 0.0168, 0.0, 0.0, 11050.0, 3, 0.7, 1.0, 70, 1000, 'Ranger direct lunar impact'],
-            [0.0, 0.995, 0.0, 0.0, 2590.0, 10, 1.1, 1.0, 70, 1000, 'Apollo 8 orbiting moon'],
-            [135.0, 0.017, 0.0, 0.0, 10998.0, 1, 0.7, 1.0, 40, 1000, 'Apollo 13 safe return'],
-            [135.0, 0.017, 0.0, 0.0, 10990.0, 1, 0.7, 1.0, 40, 1000, 'direct lunar impact'],
-            [135.0, 0.017, 0.0, 0.0, 11000.0, 1, 0.8, 1.0, 40, 1000, 'lost Apollo 13'],
-            [130.0, 0.02, 0.0, 0.0, 10080.0, 10, 1.1, 1.0, 70, 1000, '2-orbit lunar impact'],
-            [60.0, 0.8, 0.0, 400.0, 1100., 50, 1.8, 5.0, 60, 1000, 'failed L4'],
-            [60.0, 0.8, 0.0, 100.0, 1073., 10, 10.0, 10.0, 1000, 10000, 'eventual lunar impact #2'],
-            [60.0, 1.0, 0.0, 0.0, 900.0, 101, 1.3, 1.0, 100, 1000, 'lunar impact 1.5M loops'],
-            [60.0, 1.0, 0.0, 0.0, 900.0, 60, 1.5, 5.0, 80, 1000, 'many lunar interactions'],
-            [60.0, 1.0, 0.0, 0.0, 900.0, 30, 1.3, 1.0, 100, 1000, 'lunar impact, 2.2M steps'],
-            [60.0, 1.0, 0.0, 0.0, 900.0, 10, 2.0, 5.0, 500, 4000, 'temporary lunar orbits then impact'],
-            [55.0, 3.0, 0.0, 0.0, 0.0, 10, 2.0, 1.0, 100, 1000, 'non-fall to Earth from 3 moondistances.'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 19.0, 5.0, 60, 100000, '8M steps to escape'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 1.6, 5.0, 60, 10000, '323k steps to lunar impact'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 5.0, 5.0, 600, 400000, 'over 158M steps; small dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 10, 2.0, 5.0, 60, 10000, 'eventual lunar impact; medium dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 2.0, 5.0, 60, 10000, 'eventual lunar impact; big dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 60, 10000, 'eventual escape'],
+            [0.0, 0.017, 0.0, 0.0, 9200.0, 1, 0.03, 1.0, 20, 10000, 'elliptical orbit'],
+            [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 10, 10000, 'LEO = low Earth orbit'],
+            [0.0, 0.10968811, 0.0, 0.0, 3074.7937, 1, 0.15, 1.0, 50, 10000, 'geosynchronous orbit'],
+            [0.0, 0.8491, 0.0, 0.0, 861.2724303351446, 10, 1.2, 1.0, 70, 10000, 'just inside L1 lunar orbit'],
+            [0.0, 0.8491, 0.0, 0.0, 861.2724303351447, 10, 1.2, 1.0, 70, 10000, 'just outside L1 lunar orbit'],
+            [0.0, 0.8491, 0.0, 0.0, 861.27243, 10, 1.2, 1.0, 70, 10000, 'just below L1 orbit'],
+            [0.0, 0.85, 0.0, 0.0, 870.0, 10, 1.2, 1.0, 70, 10000, 'near L1'],
+            [0.0, 0.90, 0.0, 0.0, 770.0, 10, 1.2, 1.0, 70, 10000, 'distant lunar orbit'],
+            [135.4, 0.0168, 0.0, 0.0, 11050.0, 1, 2.7, 1.0, 70, 10000, 'escape with lunar assist'],
+            [135.0, 0.0168, 0.0, 0.0, 11050.0, 3, 0.7, 1.0, 70, 10000, 'Ranger direct lunar impact'],
+            [0.0, 0.995, 0.0, 0.0, 2590.0, 10, 1.1, 1.0, 70, 10000, 'Apollo 8 orbiting moon'],
+            [135.0, 0.017, 0.0, 0.0, 10998.0, 1, 0.7, 1.0, 40, 10000, 'Apollo 13 safe return'],
+            [135.0, 0.017, 0.0, 0.0, 10990.0, 1, 0.7, 1.0, 40, 10000, 'direct lunar impact'],
+            [135.0, 0.017, 0.0, 0.0, 11000.0, 1, 0.8, 1.0, 40, 10000, 'lost Apollo 13'],
+            [130.0, 0.02, 0.0, 0.0, 10080.0, 10, 1.1, 1.0, 70, 10000, '2-orbit lunar impact'],
+            [60.0, 0.8, 0.0, 400.0, 1100., 50, 1.8, 5.0, 60, 10000, 'failed L4'],
+            [60.0, 0.8, 0.0, 100.0, 1073., 10, 5.0, 10.0, 1000, 10000, 'eventual lunar impact #2'],
+            [60.0, 1.0, 0.0, 0.0, 900.0, 101, 1.3, 1.0, 100, 10000, 'lunar impact 1.5M loops'],
+            [60.0, 1.0, 0.0, 0.0, 900.0, 60, 39.5, 5.0, 80, 10000, 'many lunar interactions'],
+            [60.0, 1.0, 0.0, 0.0, 900.0, 30, 1.3, 1.0, 100, 10000, 'lunar impact, 2.2M steps'],
+            [60.0, 1.0, 0.0, 0.0, 900.0, 10, 2.0, 5.0, 500, 40000, 'temporary lunar orbits then impact'],
+            [55.0, 3.0, 0.0, 0.0, 0.0, 10, 2.0, 1.0, 100, 10000, 'non-fall to Earth from 3 moondistances.'],
             [40.0, 5.0, 0.0, 0.0, 0.0, 1, 3.0, 1.0, 500, 10000, 'fall to Earth from 5 moondistances.'],
-            [60.0, 0.9, 0.0, 0.0, 950.0, 60, 1.7, 5.0, 30, 1000, '11.85M steps to Lunar Impact'],
-            [60.0, 0.8, 0.0, 0.0, 1073., 10, 1.3, 1.0, 100, 1000, 'lunar impact'],
-            [60.0, 1.0, 0.0, 0.0, 923.0, 10, 1.1, 1.0, 70, 1000, 'lunar impact, vy=921-926'])
+            [60.0, 0.9, 0.0, 0.0, 950.0, 60, 1.7, 5.0, 30, 10000, '11.85M steps to Lunar Impact'],
+            [60.0, 0.8, 0.0, 0.0, 1073., 10, 1.3, 1.0, 100, 10000, 'lunar impact'],
+            [60.0, 1.0, 0.0, 0.0, 923.0, 10, 1.1, 1.0, 70, 10000, 'lunar impact, vy=921-926'])
 
 def grabsetup(i):   # return one setup from library
     return Initset(moondegrees=setuplib[i][0],
@@ -306,8 +306,9 @@ winmin = min(winwidth, winheight)
 winmax = max(winwidth, winheight)
 viewscale = winmin / (3.0 * moondistance * inz.winscale)  # pixels/meter
 # apixel = 0.4 / viewscale   # to plot pixels as ship moves
-apixel = 1.5 / viewscale   # to plot pixels as ship moves
-offscreen = 0.5 * winmax / viewscale     # meters to be out of view
+# apixel = 1.5 / viewscale   # to plot pixels as ship moves
+apixel = 2.5 / viewscale   # to plot pixels as ship moves
+offscreen = 0.4 * winmax / viewscale     # meters to be out of view
 
 ''' for iOS...
 canvas.translate(winwidth/2.0, winheight/2.0)   # earth at center of view
@@ -393,30 +394,31 @@ moonunits = d2e / moondistance
 shipvx = inz.shipvx
 shipvy = inz.shipvy
 
-shipcolors = ['red', 'tan', 'green', 'cyan', 'magenta', 'yellow']
-shipcolor = 0
+pathcolors = ['red', 'tan', 'green', 'cyan', 'magenta', 'yellow']
+pathcolor = 0
 colorsteps = 0
 
-win.plot(shipx, shipy, color=shipcolors[shipcolor])
+win.plot(shipx, shipy, color=pathcolors[pathcolor])
 
 ''' for iOS...
-shipcolors = [(1,0,0), (0,1,0), (0.6,0.6,1), (1,1,0), (1,0,1), (0,1,1)]
+pathcolors = [(1,0,0), (0,1,0), (0.6,0.6,1), (1,1,0), (1,0,1), (0,1,1)]
 
-def setshipcolor(i):
-    if i in range(0, len(shipcolors)):
-        colorset = shipcolors[i]
+def setpathcolor(i):
+    if i in range(0, len(pathcolors)):
+        colorset = pathcolors[i]
     else:
         colorset = (1,1,1)
     canvas.set_fill_color(colorset[0], colorset[1], colorset[2])
 
-setshipcolor(shipcolor)
+setpathcolor(pathcolor)
 canvas.fill_pixel(shipx, shipy)
 '''
 
+halfship = 1.5 / viewscale
 # Two different ship shape options, I prefer square...
-# ship = gr.Circle(gr.Point(shipx, shipy), apixel*1.5)
-ship = gr.Rectangle(gr.Point(shipx-apixel, shipy-apixel),
-                    gr.Point(shipx+apixel, shipy+apixel))
+# ship = gr.Circle(gr.Point(shipx, shipy), halfship*1.5)
+ship = gr.Rectangle(gr.Point(shipx-halfship, shipy-halfship),
+                    gr.Point(shipx+halfship, shipy+halfship))
 ship.setWidth(1)
 ship.setFill('red')
 ship.setOutline('red')
@@ -498,11 +500,11 @@ while win.checkMouse() is None:     # break out on mouse click
 
     if abs(shipx - oldx) + abs(shipy - oldy) + abs(moonx - oldmx) + abs(moony - oldmy) > apixel:
         # only update display when ship or moon moves at least a pixel
-        shipcolor = colorsteps % len(shipcolors)
+        pathcolor = colorsteps % len(pathcolors)
         moon.move(moonx - oldmx, moony - oldmy)
-        win.plot(shipx, shipy, color=shipcolors[shipcolor])
+        win.plot(shipx, shipy, color=pathcolors[pathcolor])
         ship.move(shipx - oldx, shipy - oldy)
-        # setshipcolor(shipcolor)  # for iOS version
+        # setpathcolor(pathcolor)  # for iOS version
         # canvas.fill_pixel(shipx, shipy)
         oldx = shipx
         oldy = shipy
