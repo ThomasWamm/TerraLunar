@@ -568,6 +568,7 @@ while win.checkMouse() is None:     # break out on mouse click
     iters += 1
     # Bottom of big numerical integration loop; repeat until terminated.
 
+running = False
 # Simulation loop has exited. Output stats and clean up...
 
 # motion.stop_updates()   # release iOS device accelerometers
@@ -585,7 +586,7 @@ plotrate = int(plots / elapsedtime)
 textll.setText('Ship status:  ' + shipstatus)
 print('\nShip status:  ' +  shipstatus)
 print(f"{setupnum}: {inz.description}\n",
-      f"{iters} iterations in {int(elapsedtime)} process seconds\n",
+      f"{iters} iterations in {int(elapsedtime)} seconds\n",
       f"avg.ips={itrate}   last.ips={ips}   max.ips={maxips}\n",
       f"plot.rate={plotrate}    orbits={orbits}\n")
 print(f"{moonunits:6.2f} moonu @ {velocity:7.0f} mps")
@@ -601,6 +602,9 @@ print(str(setupnum), " ", inz.description,
 
 win.getMouse()    # wait for final mouse click
 win.close()
+
+timestamp = time.asctime(time.localtime())
+print(timestamp)   # sometimes I run it for days
 
 # print()
 
