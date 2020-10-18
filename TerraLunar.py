@@ -2,7 +2,7 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Oct-17 -- Purge old commented code; tidy log.
+#     2020-Oct-17 -- More status text displayed.
 #
 # Presently works well in RaspberryOS Mu Python environment.
 #
@@ -107,22 +107,22 @@ class Initset:
 # A variety of interesting setups have been accumulated during development...
 
 setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','chktrig','Description'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 19.0, 5.0, 100000, '9.4M steps to escape'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 19.0, 5.0, 10000, '9.4M steps to escape'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 1.6, 5.0, 10000, '323k steps to lunar impact'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 5.0, 5.0, 400000, 'over 158M steps; small dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 5.0, 5.0, 40000, 'over 158M steps; small dt'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 10, 2.0, 5.0, 10000, 'eventual lunar impact; medium dt'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 2.0, 5.0, 10000, 'eventual lunar impact; big dt'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 10000, 'eventual escape'],
-            [0.0, 0.017, 0.0, 0.0, 9200.0, 1, 0.03, 1.0, 10000, 'elliptical orbit'],
-            [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 10000, 'LEO = low Earth orbit'],
-            [0.0, 0.10968811, 0.0, 0.0, 3074.7937, 1, 0.15, 1.0, 10000, 'geosynchronous orbit'],
+            [0.0, 0.017, 0.0, 0.0, 9200.0, 1, 0.03, 1.0, 1000, 'elliptical orbit'],
+            [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 1000, 'LEO = low Earth orbit'],
+            [0.0, 0.10968811, 0.0, 0.0, 3074.7937, 1, 0.15, 1.0, 1000, 'geosynchronous orbit'],
             [0.0, 0.8491, 0.0, 0.0, 861.2724303351446, 10, 1.2, 1.0, 10000, 'just outside L1'],
             [0.0, 0.8491, 0.0, 0.0, 861.2724303351447, 10, 1.2, 1.0, 10000, 'outside inside outside L1'],
             [0.0, 0.8491, 0.0, 0.0, 861.27243, 10, 1.2, 1.0, 10000, 'just below L1'],
             [0.0, 0.85, 0.0, 0.0, 870.0, 10, 1.2, 1.0, 10000, 'near L1'],
             [0.0, 0.90, 0.0, 0.0, 770.0, 10, 1.2, 1.0, 10000, 'distant lunar orbit'],
             [135.4, 0.0168, 0.0, 0.0, 11050.0, 1, 2.7, 1.0, 10000, 'escape with lunar assist'],
-            [135.0, 0.0168, 0.0, 0.0, 11050.0, 3, 0.7, 1.0, 10000, 'Ranger direct lunar impact'],
+            [135.0, 0.0168, 0.0, 0.0, 11050.0, 1, 0.7, 1.0, 10000, 'Ranger direct lunar impact'],
             [0.0, 0.995, 0.0, 0.0, 2590.0, 10, 1.1, 1.0, 10000, 'Apollo 8 orbiting moon'],
             [135.0, 0.017, 0.0, 0.0, 10998.0, 1, 0.7, 1.0, 10000, 'Apollo 13 safe return'],
             [135.0, 0.017, 0.0, 0.0, 10990.0, 1, 0.7, 1.0, 10000, 'direct lunar impact'],
@@ -347,14 +347,14 @@ win.plot(moonx, moony, color='red')  # leave red dot where moon started
 # Display some textual information (non-iOS version)...
 
 textul = gr.Text(gr.Point(xll*6/8, yur*7/8), inz.description)
-textul.setTextColor('green')
+textul.setTextColor('cyan')
 textul.draw(win)
 
 textur = gr.Text(gr.Point(xur*6/8, yur*7/8), text='Click to exit')
 textur.setTextColor('pink')
 textur.draw(win)
 
-textlr = gr.Text(gr.Point(xur*6/8, yll*7/8), text='Iterations/second')
+textlr = gr.Text(gr.Point(xur*6/8, yll*7/8), text='########## steps @ ######/sec')
 textlr.setTextColor('yellow')
 textlr.draw(win)
 
@@ -410,14 +410,14 @@ moongrav = gravcon * 7.342e22
 moonstep = math.radians(360.*dtime/(27.*24*60*60 + 7.*3600 + 43.*60 + 12.))
 
 orbits = 0     # to count orbits around Earth
-iters = 0
-olditers = iters
+steps = 0
+oldsteps = steps
 starttime = time.time()   # non-iOS version
 # starttime = time.process_time()   # iOS version
 oldtime = starttime
 plots = 0
-ips = 0
-maxips = 0
+sps = 0
+maxsps = 0
 timestamp = time.asctime(time.localtime())
 running = True
 
@@ -440,7 +440,6 @@ while win.checkMouse() is None:     # break out on mouse click
         earth.setFill('red')
         earth.move(0, 0)
         # show_earth(1,0,0)  # red crash site (iOS version)
-        # print(">>>>>>> Crashed on Earth ! <<<<<<<")
         shipstatus = "Crashed on Earth !"
         break
 
@@ -449,7 +448,6 @@ while win.checkMouse() is None:     # break out on mouse click
         moon.setFill('red')
         moon.move(0, 0)
         # show_moon(1,0,0)   # red crash site (iOS version)
-        # print("* * * * * * *  Lunar impact !  * * * * * * *")
         shipstatus = "Crashed on Moon !"
         break
 
@@ -493,37 +491,34 @@ while win.checkMouse() is None:     # break out on mouse click
         oldmy = moony
         plots += 1
 
-    if iters % inz.checktrigger == 0:
-        # provide periodic status updates
+    if steps % inz.checktrigger == 0:
+        # display periodic status updates
         trendcolor = 'green'
         if d2e > oldd2e:
             trendcolor = 'red'     # increasing distance to Earth
         earth.setOutline(trendcolor)
-        # earth.move(0, 0)   # unnecessary ?
-        newtime = time.time()   # calculate current iterations per second
-        # newtime = time.process_time()  # calculate iterations per second
+        # calculate current sps (steps per second)...
+        newtime = time.time()
+        # newtime = time.process_time()  # for iOS ?
         delta = newtime - oldtime
         if delta != 0:
-            ips = int((iters - olditers)/delta)
-            maxips = max(maxips, ips)
-        # print(0, ips)   # for studying loop slowdown vs. time
+            sps = int((steps - oldsteps)/delta)
+            maxsps = max(maxsps, sps)
+        # print(0, sps)   # for studying loop slowdown vs. time
         oldtime = newtime
-        olditers = iters
-        # textlr.undraw()
-        textlr.setText('ips = ' + str(ips))
-        # textlr.draw(win)   # unnecessary ?
-        textll.setText('Ship status:  ' + shipstatus)
+        oldsteps = steps
+        textlr.setText(str(steps) + ' steps  @  ' + str(sps) + ' /sec')
 
         moonunits = d2e / moondistance
+        textll.setText('Ship status:  ' + shipstatus + '  @  ~' + str(int(moonunits+0.51)) + ' moonunits')
+
         velocity = math.hypot(shipvx, shipvy)
         escapevelocity = math.sqrt(-2.0 * (earthgrav + moongrav) / d2e)
 
         if (velocity > escapevelocity) and (d2e > offscreen):
             earth.setFill('green')  # show green Earth then quit
             earth.setOutline('green')
-            # earth.move(0, 0)   # unnecessary ?
             # show_earth(0,1,0)   # iOS
-            # print("\n+++++++  Escape velocity !  +++++++")
             shipstatus = "Escape velocity !  Lost in space!"
             break
 
@@ -539,7 +534,7 @@ while win.checkMouse() is None:     # break out on mouse click
         '''
 
     simtime += dtime
-    iters += 1
+    steps += 1
     # Bottom of big numerical integration loop; repeat until terminated.
 
 running = False
@@ -557,17 +552,19 @@ stoptime = time.time()
 elapsedtime = stoptime - starttime
 if elapsedtime == 0:
     elapsedtime = 1.0
-itrate = int(iters / elapsedtime)
+itrate = int(steps / elapsedtime)
 plotrate = int(plots / elapsedtime)
 moonunits = d2e / moondistance
 velocity = math.hypot(shipvx, shipvy)
 
-textll.setText('Ship status:  ' + shipstatus)
+# textll.setText('Ship status:  ' + shipstatus)
+textll.setText('Ship status:  ' + shipstatus + '  @  ~' + str(int(moonunits+0.51)) + ' moonunits')
+textlr.setText(str(steps) + ' steps  @  ' + str(sps) + ' /sec')
 
 print('\nShip status:  ' +  shipstatus)
 print(f"{setupnum}: {inz.description}\n",
-      f"{iters} iterations in {int(elapsedtime)} seconds\n",
-      f"avg.ips={itrate}   last.ips={ips}   max.ips={maxips}\n",
+      f"{steps} steps in {int(elapsedtime)} seconds\n",
+      f"avg.sps={itrate}   last.sps={sps}   max.sps={maxsps}\n",
       f"plot.rate={plotrate}    orbits={orbits}\n")
 print(f"{moonunits:6.2f} moonu @ {velocity:7.0f} mps")
 
