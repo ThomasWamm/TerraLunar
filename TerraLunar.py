@@ -2,7 +2,7 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Oct-16 -- Optimized speed.
+#     2020-Oct-17 -- Purge old commented code.
 #
 # Presently works well in RaspberryOS Mu Python environment.
 #
@@ -28,6 +28,7 @@ import motion
 import dialogs
 '''
 
+print('\n')
 print('TerraLunar: simplified orbital mechanics simulation')
 
 # Need adaptability for different display devices...
@@ -76,23 +77,6 @@ localconfig = cfg['localconfig']
 print(f'Screen width x height = {winwidth} x {winheight} {localconfig}')
 print()
 
-''' Older code not presently used...
-displaychoice = 4
-displayoptions = [[0, "small netbook screen", 1024, 580],
-                  [1, "medium 720p screen", 1280, 700],
-                  [2, "large 1080p screen", 1920, 1080],
-                  [3, "huge 4k big screen", 3840, 2100],
-                  [4, "for Raspbian at 1080p", 1917, 1030],
-                  [5, "Win10 1920x1080 with 125% scaleup", 1540, 840],
-                  [6, "old iMac display 1920x1200", 1940, 1160],
-                  [7, "lowres Windows 10 laptop 1366x768", 1380, 740]]
-
-winwidth = int(displayoptions[displaychoice][2])
-winheight = int(displayoptions[displaychoice][3])
-print('Display choice = #' + str(displaychoice) + '  '
-        + displayoptions[displaychoice][1])
-'''
-
 # Global objects for graphics, Earth, Moon, and one spacecraft...
 
 # define a class to store a set of initial conditions...
@@ -106,7 +90,6 @@ class Initset:
                  dtime=10,
                  winscale=1.2,
                  radscale=5.0,
-                 plottrigger=70,
                  checktrigger=1000,
                  description='Default setup'):
 
@@ -118,45 +101,44 @@ class Initset:
         self.dtime = dtime
         self.winscale = winscale
         self.radscale = radscale
-        self.plottrigger = plottrigger
         self.checktrigger = checktrigger
         self.description = description
 
 # A variety of interesting setups have been accumulated during development...
 
-setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','pltrig','chktrig','Description'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 19.0, 5.0, 60, 100000, '8M steps to escape'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 1.6, 5.0, 60, 10000, '323k steps to lunar impact'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 5.0, 5.0, 600, 400000, 'over 158M steps; small dt'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 10, 2.0, 5.0, 60, 10000, 'eventual lunar impact; medium dt'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 2.0, 5.0, 60, 10000, 'eventual lunar impact; big dt'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 60, 10000, 'eventual escape'],
-            [0.0, 0.017, 0.0, 0.0, 9200.0, 1, 0.03, 1.0, 20, 10000, 'elliptical orbit'],
-            [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 10, 10000, 'LEO = low Earth orbit'],
-            [0.0, 0.10968811, 0.0, 0.0, 3074.7937, 1, 0.15, 1.0, 50, 10000, 'geosynchronous orbit'],
-            [0.0, 0.8491, 0.0, 0.0, 861.2724303351446, 10, 1.2, 1.0, 70, 10000, 'lunar orbit just inside L1'],
-            [0.0, 0.8491, 0.0, 0.0, 861.2724303351447, 10, 1.2, 1.0, 70, 10000, 'outside inside outside L1'],
-            [0.0, 0.8491, 0.0, 0.0, 861.27243, 10, 1.2, 1.0, 70, 10000, 'just below L1 orbit'],
-            [0.0, 0.85, 0.0, 0.0, 870.0, 10, 1.2, 1.0, 70, 10000, 'near L1'],
-            [0.0, 0.90, 0.0, 0.0, 770.0, 10, 1.2, 1.0, 70, 10000, 'distant lunar orbit'],
-            [135.4, 0.0168, 0.0, 0.0, 11050.0, 1, 2.7, 1.0, 70, 10000, 'escape with lunar assist'],
-            [135.0, 0.0168, 0.0, 0.0, 11050.0, 3, 0.7, 1.0, 70, 10000, 'Ranger direct lunar impact'],
-            [0.0, 0.995, 0.0, 0.0, 2590.0, 10, 1.1, 1.0, 70, 10000, 'Apollo 8 orbiting moon'],
-            [135.0, 0.017, 0.0, 0.0, 10998.0, 1, 0.7, 1.0, 40, 10000, 'Apollo 13 safe return'],
-            [135.0, 0.017, 0.0, 0.0, 10990.0, 1, 0.7, 1.0, 40, 10000, 'direct lunar impact'],
-            [135.0, 0.017, 0.0, 0.0, 11000.0, 1, 0.8, 1.0, 40, 10000, 'lost Apollo 13'],
-            [130.0, 0.02, 0.0, 0.0, 10080.0, 10, 1.1, 1.0, 70, 10000, '2-orbit lunar impact'],
-            [60.0, 0.8, 0.0, 400.0, 1100., 50, 1.8, 5.0, 60, 10000, 'failed L4'],
-            [60.0, 0.8, 0.0, 100.0, 1073., 10, 5.0, 10.0, 1000, 10000, 'eventual lunar impact #2'],
-            [60.0, 1.0, 0.0, 0.0, 900.0, 101, 1.3, 1.0, 100, 10000, 'lunar impact 1.5M loops'],
-            [60.0, 1.0, 0.0, 0.0, 900.0, 60, 39.5, 5.0, 80, 10000, 'many lunar interactions'],
-            [60.0, 1.0, 0.0, 0.0, 900.0, 30, 1.3, 1.0, 100, 10000, 'lunar impact, 2.2M steps'],
-            [60.0, 1.0, 0.0, 0.0, 900.0, 10, 2.0, 5.0, 500, 40000, 'temporary lunar orbits then impact'],
-            [55.0, 3.0, 0.0, 0.0, 0.0, 10, 2.0, 1.0, 100, 10000, 'non-fall to Earth from 3 moondistances.'],
-            [40.0, 5.0, 0.0, 0.0, 0.0, 1, 3.0, 1.0, 500, 10000, 'fall to Earth from 5 moondistances.'],
-            [60.0, 0.9, 0.0, 0.0, 950.0, 60, 1.7, 5.0, 30, 10000, '11.85M steps to Lunar Impact'],
-            [60.0, 0.8, 0.0, 0.0, 1073., 10, 1.3, 1.0, 100, 10000, 'lunar impact'],
-            [60.0, 1.0, 0.0, 0.0, 923.0, 10, 1.1, 1.0, 70, 10000, 'lunar impact, vy=921-926'])
+setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','chktrig','Description'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 19.0, 5.0, 100000, '9.4M steps to escape'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 1.6, 5.0, 10000, '323k steps to lunar impact'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 5.0, 5.0, 400000, 'over 158M steps; small dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 10, 2.0, 5.0, 10000, 'eventual lunar impact; medium dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 2.0, 5.0, 10000, 'eventual lunar impact; big dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 10000, 'eventual escape'],
+            [0.0, 0.017, 0.0, 0.0, 9200.0, 1, 0.03, 1.0, 10000, 'elliptical orbit'],
+            [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 10000, 'LEO = low Earth orbit'],
+            [0.0, 0.10968811, 0.0, 0.0, 3074.7937, 1, 0.15, 1.0, 10000, 'geosynchronous orbit'],
+            [0.0, 0.8491, 0.0, 0.0, 861.2724303351446, 10, 1.2, 1.0, 10000, 'just outside L1'],
+            [0.0, 0.8491, 0.0, 0.0, 861.2724303351447, 10, 1.2, 1.0, 10000, 'outside inside outside L1'],
+            [0.0, 0.8491, 0.0, 0.0, 861.27243, 10, 1.2, 1.0, 10000, 'just below L1'],
+            [0.0, 0.85, 0.0, 0.0, 870.0, 10, 1.2, 1.0, 10000, 'near L1'],
+            [0.0, 0.90, 0.0, 0.0, 770.0, 10, 1.2, 1.0, 10000, 'distant lunar orbit'],
+            [135.4, 0.0168, 0.0, 0.0, 11050.0, 1, 2.7, 1.0, 10000, 'escape with lunar assist'],
+            [135.0, 0.0168, 0.0, 0.0, 11050.0, 3, 0.7, 1.0, 10000, 'Ranger direct lunar impact'],
+            [0.0, 0.995, 0.0, 0.0, 2590.0, 10, 1.1, 1.0, 10000, 'Apollo 8 orbiting moon'],
+            [135.0, 0.017, 0.0, 0.0, 10998.0, 1, 0.7, 1.0, 10000, 'Apollo 13 safe return'],
+            [135.0, 0.017, 0.0, 0.0, 10990.0, 1, 0.7, 1.0, 10000, 'direct lunar impact'],
+            [135.0, 0.017, 0.0, 0.0, 11000.0, 1, 0.8, 1.0, 10000, 'lost Apollo 13'],
+            [130.0, 0.02, 0.0, 0.0, 10080.0, 10, 1.1, 1.0, 10000, '2-orbit lunar impact'],
+            [60.0, 0.8, 0.0, 400.0, 1100., 50, 1.8, 5.0, 10000, 'failed L4'],
+            [60.0, 0.8, 0.0, 100.0, 1073., 10, 5.0, 10.0, 10000, 'eventual lunar impact #2'],
+            [60.0, 1.0, 0.0, 0.0, 900.0, 101, 1.3, 1.0, 10000, 'lunar impact 1.5M loops'],
+            [60.0, 1.0, 0.0, 0.0, 900.0, 60, 39.5, 5.0, 10000, 'many lunar interactions'],
+            [60.0, 1.0, 0.0, 0.0, 900.0, 30, 1.3, 1.0, 10000, 'lunar impact, 2.2M steps'],
+            [60.0, 1.0, 0.0, 0.0, 900.0, 10, 2.0, 5.0, 40000, 'temporary lunar orbits then impact'],
+            [55.0, 3.0, 0.0, 0.0, 0.0, 10, 2.0, 1.0, 10000, 'non-fall to Earth from 3 moondistances.'],
+            [40.0, 5.0, 0.0, 0.0, 0.0, 1, 3.0, 1.0, 10000, 'fall to Earth from 5 moondistances.'],
+            [60.0, 0.9, 0.0, 0.0, 950.0, 60, 1.7, 5.0, 10000, '11.85M steps to Lunar Impact'],
+            [60.0, 0.8, 0.0, 0.0, 1073., 10, 1.3, 1.0, 10000, 'lunar impact'],
+            [60.0, 1.0, 0.0, 0.0, 923.0, 10, 1.1, 1.0, 10000, 'lunar impact, vy=921-926'])
 
 def grabsetup(i):   # return one setup from library
     return Initset(moondegrees=setuplib[i][0],
@@ -167,9 +149,8 @@ def grabsetup(i):   # return one setup from library
                    dtime=setuplib[i][5],
                    winscale=setuplib[i][6],
                    radscale=setuplib[i][7],
-                   plottrigger=setuplib[i][8],  # may be obsolete
-                   checktrigger=setuplib[i][9],
-                   description=setuplib[i][10])
+                   checktrigger=setuplib[i][8],
+                   description=setuplib[i][9])
 
 def parseparams(d):   # extract setup from json dictionary object
     return Initset(moondegrees=d['moondeg'],
@@ -180,7 +161,6 @@ def parseparams(d):   # extract setup from json dictionary object
                    dtime=d['dt'],
                    winscale=d['wscale'],
                    radscale=d['rscale'],
-                   plottrigger=1000,          # may be obsolete
                    checktrigger=d['chktrig'],
                    description=d['Description'])
 
@@ -193,23 +173,19 @@ def grabsnap():   # grab parameter snapshot to enable logging and replays
                 'dt': dtime,
                 'wscale': inz.winscale,
                 'rscale': inz.radscale,
-                'plttrig': inz.plottrigger,       # may be obsolete
                 'chktrig': inz.checktrigger,
                 'Description': 'Logging: ' + inz.description}
     return snapdict
 
 
-# Display the available initial condition setups, old way or new way...
-
-# for i in range(1, len(setuplib)):
-#     print(str(i), setuplib[int(i)][10])
+# Display the available initial condition setups...
 
 i = 1
 columns = 2    # for smaller displays, e.g. mobiles
 columns = 3    # for larger displays
 while i < len(setuplib):
     for j in range(i, min(i+columns, len(setuplib))):
-        print(f'{j:2d} {setuplib[j][10]:40}', end='')
+        print(f'{j:2d} {setuplib[j][9]:40}', end='')
     print()
     i += columns
 
@@ -416,9 +392,8 @@ setpathcolor(pathcolor)
 canvas.fill_pixel(shipx, shipy)
 '''
 
+# draw ship as a small red square
 halfship = 1.5 / viewscale
-# Two different ship shape options, I prefer square...
-# ship = gr.Circle(gr.Point(shipx, shipy), halfship*1.5)
 ship = gr.Rectangle(gr.Point(shipx-halfship, shipy-halfship),
                     gr.Point(shipx+halfship, shipy+halfship))
 ship.setWidth(1)
@@ -452,8 +427,7 @@ logfile = open('tl-log.txt', 'a')  # open log file for append
 logfile.write(timestamp)
 logfile.write(f"\n{setupnum}: {inz.description}\n\n")
 
-print()
-print(timestamp)
+print('Started @ ' + timestamp)
 
 # top of big numerical integration simulation loop...
 
@@ -525,19 +499,19 @@ while win.checkMouse() is None:     # break out on mouse click
         if d2e > oldd2e:
             trendcolor = 'red'     # increasing distance to Earth
         earth.setOutline(trendcolor)
-        # earth.move(0, 0)
+        # earth.move(0, 0)   # unnecessary ?
         newtime = time.time()   # calculate current iterations per second
         # newtime = time.process_time()  # calculate iterations per second
         delta = newtime - oldtime
         if delta != 0:
             ips = int((iters - olditers)/delta)
             maxips = max(maxips, ips)
-        # print(0, ips)
+        # print(0, ips)   # for studying loop slowdown vs. time
         oldtime = newtime
         olditers = iters
         # textlr.undraw()
         textlr.setText('ips = ' + str(ips))
-        # textlr.draw(win)
+        # textlr.draw(win)   # unnecessary ?
         textll.setText('Ship status:  ' + shipstatus)
 
         moonunits = d2e / moondistance
@@ -547,7 +521,7 @@ while win.checkMouse() is None:     # break out on mouse click
         if (velocity > escapevelocity) and (d2e > offscreen):
             earth.setFill('green')  # show green Earth then quit
             earth.setOutline('green')
-            earth.move(0, 0)
+            # earth.move(0, 0)   # unnecessary ?
             # show_earth(0,1,0)   # iOS
             # print("\n+++++++  Escape velocity !  +++++++")
             shipstatus = "Escape velocity !  Lost in space!"
@@ -573,7 +547,10 @@ running = False
 
 # motion.stop_updates()   # release iOS device accelerometers
 
+timestamp = time.asctime(time.localtime())
+logfile.write(timestamp)
 logfile.close()
+print('Stopped @ ' + timestamp)   # sometimes I run it for days
 
 stoptime = time.time()
 # stoptime = time.process_time()   # iOS
@@ -582,8 +559,11 @@ if elapsedtime == 0:
     elapsedtime = 1.0
 itrate = int(iters / elapsedtime)
 plotrate = int(plots / elapsedtime)
+moonunits = d2e / moondistance
+velocity = math.hypot(shipvx, shipvy)
 
 textll.setText('Ship status:  ' + shipstatus)
+
 print('\nShip status:  ' +  shipstatus)
 print(f"{setupnum}: {inz.description}\n",
       f"{iters} iterations in {int(elapsedtime)} seconds\n",
@@ -591,23 +571,12 @@ print(f"{setupnum}: {inz.description}\n",
       f"plot.rate={plotrate}    orbits={orbits}\n")
 print(f"{moonunits:6.2f} moonu @ {velocity:7.0f} mps")
 
-''' older report...
-print(str(setupnum), " ", inz.description,
-      "  elapsed=", str(int(elapsedtime)),
-      "  iters=", str(iters),
-      "  last.ips=", str(ips), "  avg.ips=", str(itrate),
-      "  plot.rate=", str(plotrate),
-      "  d2e-oldd2e=", str(int(d2e-oldd2e)))
-'''
-
 win.getMouse()    # wait for final mouse click
 win.close()
 
 timestamp = time.asctime(time.localtime())
-print(timestamp)   # sometimes I run it for days
+print('Exited  @ ' + timestamp)   # sometimes I ignore it for days
 
-# print()
-
-# drop into a Python shell
+# optionally drop into a Python shell
 # code.interact(local=dict(globals(), **locals()))
 # end.
