@@ -2,7 +2,7 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Oct-17 -- Purge old commented code.
+#     2020-Oct-17 -- Purge old commented code; tidy log.
 #
 # Presently works well in RaspberryOS Mu Python environment.
 #
@@ -424,8 +424,8 @@ running = True
 # motion.start_updates()  # enable iOS device accelerometers
 
 logfile = open('tl-log.txt', 'a')  # open log file for append
-logfile.write(timestamp)
-logfile.write(f"\n{setupnum}: {inz.description}\n\n")
+logfile.write(f"\n{setupnum}: {inz.description}\n")
+logfile.write('Start @ ' + timestamp + '\n')
 
 print('Started @ ' + timestamp)
 
@@ -548,7 +548,7 @@ running = False
 # motion.stop_updates()   # release iOS device accelerometers
 
 timestamp = time.asctime(time.localtime())
-logfile.write(timestamp)
+logfile.write('End   @ ' + timestamp + '\n-----------------------------\n')
 logfile.close()
 print('Stopped @ ' + timestamp)   # sometimes I run it for days
 
