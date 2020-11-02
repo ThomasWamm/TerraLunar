@@ -14,8 +14,10 @@
 # x = x + dx = x + vdt
 # t = t + dt
 
-# This version runs on Linux, Windows, maybe MacOS with Python3.7 or higher.
+# This version runs on Linux, Windows, and MacOS with Python3.7 or higher.
 # Comment-hidden code might still be usable with Pythonista app on iOS.
+
+TerraLunar_version = "0.1.1"
 
 import graphics as gr        # graphics.py is a wrapper for the tkinter module
 from random import randint
@@ -30,7 +32,7 @@ import dialogs
 '''
 
 print('\n')
-print('TerraLunar: simplified orbital mechanics simulation')
+print(f'TerraLunar ver {TerraLunar_version}: simplified orbital mechanics simulation')
 
 # Need adaptability for different display devices...
 
@@ -345,20 +347,24 @@ win.plot(moonx, moony, color='red')  # leave red dot where moon started
 
 # Display some textual information (non-iOS version)...
 
-textul = gr.Text(gr.Point(xll*6/8, yur*7/8), inz.description)
+textversion = gr.Text(gr.Point(xll*0.90, yur*0.95), "TerraLunar ver " + TerraLunar_version)
+textversion.setTextColor('cyan')
+textversion.draw(win)
+
+textul = gr.Text(gr.Point(xll*0.85, yur*0.90), inz.description)
 textul.setTextColor('cyan')
 textul.draw(win)
 
-textur = gr.Text(gr.Point(xur*6/8, yur*7/8), text='Click to exit')
+textur = gr.Text(gr.Point(xur*0.90, yur*0.95), text='Click to exit')
 textur.setTextColor('pink')
 textur.draw(win)
 
-textlr = gr.Text(gr.Point(xur*6/8, yll*7/8), text='########## steps @ ######/sec')
+textlr = gr.Text(gr.Point(xur*0.75, yll*0.95), text='########## steps @ ######/sec')
 textlr.setTextColor('yellow')
 textlr.draw(win)
 
 shipstatus = 'in orbit'
-textll = gr.Text(gr.Point(xll*6/8, yll*7/8), text='Status:  ' + shipstatus)
+textll = gr.Text(gr.Point(xll*0.75, yll*0.95), text='Status:  ' + shipstatus)
 textll.setTextColor('white')
 textll.draw(win)
 
