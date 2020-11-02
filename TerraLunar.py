@@ -2,9 +2,10 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Oct-17 -- More status text displayed.
+#     2020-Nov-1 -- Improved status display.
 #
 # Presently works well in RaspberryOS Mu Python environment.
+# Mystery:  different CPUs give different results!
 #
 # Use simplified Newtonian physics and numerical integrations.
 # F = ma = -GMm/r^2
@@ -109,10 +110,10 @@ class Initset:
 setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','chktrig','Description'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 19.0, 5.0, 10000, '9.4M steps to escape'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 1.6, 5.0, 10000, '323k steps to lunar impact'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 5.0, 5.0, 40000, 'over 158M steps; small dt'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 1, 5.0, 5.0, 40000, 'escape within 1B steps; small dt'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 10, 2.0, 5.0, 10000, 'eventual lunar impact; medium dt'],
             [60.0, 1.1, 0.0, 0.0, 1000.0, 60, 2.0, 5.0, 10000, 'eventual lunar impact; big dt'],
-            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 10000, 'eventual escape'],
+            [60.0, 1.1, 0.0, 0.0, 1000.0, 30, 2.0, 5.0, 10000, '8M steps to escape'],
             [0.0, 0.017, 0.0, 0.0, 9200.0, 1, 0.03, 1.0, 1000, 'elliptical orbit'],
             [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 1000, 'LEO = low Earth orbit'],
             [0.0, 0.10968811, 0.0, 0.0, 3074.7937, 1, 0.15, 1.0, 1000, 'geosynchronous orbit'],
@@ -128,7 +129,7 @@ setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','chktrig','D
             [135.0, 0.017, 0.0, 0.0, 10990.0, 1, 0.7, 1.0, 10000, 'direct lunar impact'],
             [135.0, 0.017, 0.0, 0.0, 11000.0, 1, 0.8, 1.0, 10000, 'lost Apollo 13'],
             [130.0, 0.02, 0.0, 0.0, 10080.0, 10, 1.1, 1.0, 10000, '2-orbit lunar impact'],
-            [60.0, 0.8, 0.0, 400.0, 1100., 50, 1.8, 5.0, 10000, 'failed L4'],
+            [60.0, 0.8, 0.0, 400.0, 1100., 50, 1.8, 5.0, 10000, 'failed L4; 11M steps to moon'],
             [60.0, 0.8, 0.0, 100.0, 1073., 10, 5.0, 10.0, 10000, 'eventual lunar impact #2'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 101, 1.3, 1.0, 10000, 'lunar impact 1.5M loops'],
             [60.0, 1.0, 0.0, 0.0, 900.0, 60, 39.5, 5.0, 10000, 'many lunar interactions'],
@@ -281,9 +282,7 @@ earth.draw(win)
 winmin = min(winwidth, winheight)
 winmax = max(winwidth, winheight)
 viewscale = winmin / (3.0 * moondistance * inz.winscale)  # pixels/meter
-# apixel = 0.4 / viewscale   # to plot pixels as ship moves
-# apixel = 1.5 / viewscale   # to plot pixels as ship moves
-apixel = 2.5 / viewscale   # to plot pixels as ship moves
+apixel = 2.5 / viewscale   # movement size to provoke a screen update
 offscreen = 0.4 * winmax / viewscale     # meters to be out of view
 crumbinterval = 5
 crumbsteps = crumbinterval
@@ -507,10 +506,12 @@ while win.checkMouse() is None:     # break out on mouse click
         # print(0, sps)   # for studying loop slowdown vs. time
         oldtime = newtime
         oldsteps = steps
-        textlr.setText(str(steps) + ' steps  @  ' + str(sps) + ' /sec')
+        steps_string = f"{steps:,.0f} steps  @  {sps} /sec"
+        textlr.setText(steps_string)
 
         moonunits = d2e / moondistance
-        textll.setText('Ship status:  ' + shipstatus + '  @  ~' + str(int(moonunits+0.51)) + ' moonunits')
+        status_string = f"Ship status:  {shipstatus}  @  {moonunits:.1f} moonunits"
+        textll.setText(status_string)
 
         velocity = math.hypot(shipvx, shipvy)
         escapevelocity = math.sqrt(-2.0 * (earthgrav + moongrav) / d2e)
@@ -557,9 +558,11 @@ plotrate = int(plots / elapsedtime)
 moonunits = d2e / moondistance
 velocity = math.hypot(shipvx, shipvy)
 
-# textll.setText('Ship status:  ' + shipstatus)
-textll.setText('Ship status:  ' + shipstatus + '  @  ~' + str(int(moonunits+0.51)) + ' moonunits')
-textlr.setText(str(steps) + ' steps  @  ' + str(sps) + ' /sec')
+status_string = f"Ship status:  {shipstatus}  @  {moonunits:.1f} moonunits"
+textll.setText(status_string)
+
+steps_string = f"{steps:,.0f} steps  @  {sps} /sec"
+textlr.setText(steps_string)
 
 print('\nShip status:  ' +  shipstatus)
 print(f"{setupnum}: {inz.description}\n",
