@@ -1,1 +1,3 @@
 How shall I handle this file in git?
+Created on pi4B4.
+Edited on HP.
