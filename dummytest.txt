@@ -1,0 +1,1 @@
+How shall I handle this file in git?
