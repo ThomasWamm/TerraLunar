@@ -2,7 +2,7 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Nov-1 -- Improved status display.
+#     2020-Nov-8 -- Log & print final snapshot.
 #
 # Presently works well in RaspberryOS Mu Python environment.
 # Mystery:  different CPUs give different results!
@@ -17,7 +17,7 @@
 # This version runs on Linux, Windows, and MacOS with Python3.7 or higher.
 # Comment-hidden code might still be usable with Pythonista app on iOS.
 
-TerraLunar_version = "0.1.1"
+TerraLunar_version = "0.1.2"
 
 import graphics as gr        # graphics.py is a wrapper for the tkinter module
 from random import randint
@@ -177,7 +177,7 @@ def grabsnap():   # grab parameter snapshot to enable logging and replays
                 'wscale': inz.winscale,
                 'rscale': inz.radscale,
                 'chktrig': inz.checktrigger,
-                'Description': 'Logging: ' + inz.description}
+                'Description': 'Snapshot from: ' + inz.description}
     return snapdict
 
 
@@ -469,7 +469,7 @@ while win.checkMouse() is None:     # break out on mouse click
         colorsteps += 1   # change ship color every orbit around Earth
         snapshot = grabsnap()    # snapshot and log current parameters
         json.dump(snapshot, logfile)
-        logfile.write('\n\n')
+        logfile.write('\n')
 
     moonangle += moonstep
     moonx = earthx + moondistance*math.cos(moonangle)
@@ -551,7 +551,6 @@ running = False
 
 timestamp = time.asctime(time.localtime())
 logfile.write('End   @ ' + timestamp + '\n-----------------------------\n')
-logfile.close()
 print('Stopped @ ' + timestamp)   # sometimes I run it for days
 
 stoptime = time.time()
@@ -577,6 +576,13 @@ print(f"{setupnum}: {inz.description}\n",
       f"plot.rate={plotrate}    orbits={orbits}\n")
 print(f"{moonunits:6.2f} moonu @ {velocity:7.0f} mps")
 
+snapshot = grabsnap()    # snapshot and log final parameters
+snapshot["Description"] = f"Final snapshot; {shipstatus}"
+json.dump(snapshot, logfile)
+logfile.write('\n==============================\n')
+logfile.close()
+print(snapshot)
+
 win.getMouse()    # wait for final mouse click
 win.close()
 
@@ -584,5 +590,5 @@ timestamp = time.asctime(time.localtime())
 print('Exited  @ ' + timestamp)   # sometimes I ignore it for days
 
 # optionally drop into a Python shell
-# code.interact(local=dict(globals(), **locals()))
+#code.interact(local=dict(globals(), **locals()))
 # end.
