@@ -2,7 +2,7 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Nov-8 -- Log & print final snapshot.
+#     2020-Nov-10 -- Annotated setups library.
 #
 # Presently works well in RaspberryOS Mu Python environment.
 # Mystery:  different CPUs give different results!
@@ -17,7 +17,7 @@
 # This version runs on Linux, Windows, and MacOS with Python3.7 or higher.
 # Comment-hidden code might still be usable with Pythonista app on iOS.
 
-TerraLunar_version = "0.1.2"
+TerraLunar_version = "0.1.2.1"
 
 import graphics as gr        # graphics.py is a wrapper for the tkinter module
 from random import randint
@@ -120,7 +120,7 @@ setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','chktrig','D
             [0.0, 0.017, 0.0, 0.0, 7900.0, 1, 0.02, 1.0, 1000, 'LEO = low Earth orbit'],
             [0.0, 0.10968811, 0.0, 0.0, 3074.7937, 1, 0.15, 1.0, 1000, 'geosynchronous orbit'],
             [0.0, 0.8491, 0.0, 0.0, 861.2724303351446, 10, 1.2, 1.0, 10000, 'just outside L1'],
-            [0.0, 0.8491, 0.0, 0.0, 861.2724303351447, 10, 1.2, 1.0, 10000, 'outside inside outside L1'],
+            [0.0, 0.8491, 0.0, 0.0, 861.2724303351447, 10, 1.2, 1.0, 10000, 'outside 22M inside outside L1'],
             [0.0, 0.8491, 0.0, 0.0, 861.27243, 10, 1.2, 1.0, 10000, 'just below L1'],
             [0.0, 0.85, 0.0, 0.0, 870.0, 10, 1.2, 1.0, 10000, 'near L1'],
             [0.0, 0.90, 0.0, 0.0, 770.0, 10, 1.2, 1.0, 10000, 'distant lunar orbit'],
