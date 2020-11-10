@@ -1,2 +1,7 @@
 tl.cfg
 vs-code-terralunar.code-workspace
+.vscode/settings.json
+tl-log.txt
+tl-sample.cfg
+__pycache__/graphics.cpython-39.pyc
+.gitignore
