@@ -2,7 +2,7 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Nov-10 -- Annotated setups library.
+#     2020-Dec-16 -- Added more setups to library.
 #
 # Presently works well in RaspberryOS Mu Python environment.
 # Mystery:  different CPUs give different results!
@@ -17,7 +17,7 @@
 # This version runs on Linux, Windows, and MacOS with Python3.7 or higher.
 # Comment-hidden code might still be usable with Pythonista app on iOS.
 
-TerraLunar_version = "0.1.2.1"
+TerraLunar_version = "0.1.2.2"
 
 import graphics as gr        # graphics.py is a wrapper for the tkinter module
 from random import randint
@@ -141,7 +141,10 @@ setuplib = (['moondeg','xmd','ymd','vx','vy','dt','wscale','rscale','chktrig','D
             [40.0, 5.0, 0.0, 0.0, 0.0, 1, 3.0, 1.0, 10000, 'fall to Earth from 5 moondistances.'],
             [60.0, 0.9, 0.0, 0.0, 950.0, 60, 1.7, 5.0, 10000, '11.85M steps to Lunar Impact'],
             [60.0, 0.8, 0.0, 0.0, 1073., 10, 1.3, 1.0, 10000, 'lunar impact'],
-            [60.0, 1.0, 0.0, 0.0, 923.0, 10, 1.1, 1.0, 10000, 'lunar impact, vy=921-926'])
+            [60.0, 1.0, 0.0, 0.0, 923.0, 10, 1.1, 1.0, 10000, 'lunar impact, vy=921-926'],
+            [0.0, 0.98, 0.0, 0.0, 2000.0, 10, 1.1, 1.0, 10000, 'medium distance lunar orbit 1'],
+            [0.0, 0.95, 0.0, 0.0, 1500.0, 10, 1.1, 1.0, 10000, 'medium distance lunar orbit 2'],
+)
 
 def grabsetup(i):   # return one setup from library
     return Initset(moondegrees=setuplib[i][0],
