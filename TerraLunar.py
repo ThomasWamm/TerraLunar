@@ -2,7 +2,7 @@
 #
 # 2-D orbital mechanics simulation in Earth-Moon space.
 # by Thomas during 2020 for learning Python & SWEng
-#     2020-Dec-16 -- Added more setups to library.
+#     2021-Mar-6 -- import graphics module AFTER user input.
 #
 # Presently works well in RaspberryOS Mu Python environment.
 # Mystery:  different CPUs give different results!
@@ -17,9 +17,9 @@
 # This version runs on Linux, Windows, and MacOS with Python3.7 or higher.
 # Comment-hidden code might still be usable with Pythonista app on iOS.
 
-TerraLunar_version = "0.1.2.2"
+TerraLunar_version = "0.1.3"
 
-import graphics as gr        # graphics.py is a wrapper for the tkinter module
+#import graphics as gr        # moved this line to AFTER user input
 from random import randint
 import math
 import time
@@ -238,6 +238,8 @@ if query == 0:
 
 # Create the graphics display window...
 
+import graphics as gr        # graphics.py is a wrapper for the tkinter module
+
 win = gr.GraphWin("Noobie TerraLunar Python program", winwidth, winheight)
 win.setBackground('black')
 
@@ -288,6 +290,7 @@ winmin = min(winwidth, winheight)
 winmax = max(winwidth, winheight)
 viewscale = winmin / (3.0 * moondistance * inz.winscale)  # pixels/meter
 apixel = 2.5 / viewscale   # movement size to provoke a screen update
+#apixel = 100. * 2.5 / viewscale   # to test slowdown caused by tkinter
 offscreen = 0.4 * winmax / viewscale     # meters to be out of view
 crumbinterval = 5
 crumbsteps = crumbinterval
