@@ -40,3 +40,6 @@ PTR-TerraLunar-workspace.code-workspace
 workspace.code-workspace
 .DS_Store
 tl-test.cfg
+__pycache__/graphics.cpython-310.pyc
+dummytest.txt
+TL.code-workspace
