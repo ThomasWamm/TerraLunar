@@ -43,3 +43,5 @@ tl-test.cfg
 __pycache__/graphics.cpython-310.pyc
 dummytest.txt
 TL.code-workspace
+__pycache__/graphics.cpython-310.pyc
+.gitignore
